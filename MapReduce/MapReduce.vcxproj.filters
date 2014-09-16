@@ -29,7 +29,7 @@
     <ClInclude Include="Job.h">
       <Filter>MapReduce</Filter>
     </ClInclude>
-    <ClInclude Include="StdMapBuffer.h">
+    <ClInclude Include="StdMapVectorBuffer.h">
       <Filter>MapReduce\DataBuffer</Filter>
     </ClInclude>
   </ItemGroup>

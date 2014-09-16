@@ -69,7 +69,7 @@
   <ItemGroup>
     <ClInclude Include="Job.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="StdMapBuffer.h" />
+    <ClInclude Include="StdMapVectorBuffer.h" />
     <ClInclude Include="StdMapDrain.h" />
     <ClInclude Include="StdMapSource.h" />
   </ItemGroup>

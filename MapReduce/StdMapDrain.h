@@ -30,10 +30,10 @@ public:
 	{
 	}
 
-	inline void AddData(typename ReducePolicy::KeyType& key, typename ReducePolicy::ValueType& value)
+	inline void AddData(typename ReducePolicy::KeyType key, typename ReducePolicy::ValueType value)
 	{
 		std::lock_guard<std::mutex> guard(m_destMutex);
-		m_dest->insert(std::make_pair<
+		m_dest->insert(std::pair<
 			typename ReducePolicy::KeyType, 
 			typename ReducePolicy::ValueType>(key, value));
 	}

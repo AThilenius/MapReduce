@@ -9,7 +9,7 @@
 
 #include "StdMapSource.h"
 #include "StdMapDrain.h"
-#include "StdMapBuffer.h"
+#include "StdMapVectorBuffer.h"
 
 namespace Thilenius {
 namespace MapReduce { 
@@ -21,16 +21,19 @@ template<
 	typename ReducePolicy,
 	typename SourcePolicy = DataSource::StdMapSource<MapPolicy>,
 	typename DrainPolicy = DataDrain::StdMapDrain<ReducePolicy>,
-	typename BufferPolicy = DataBuffer::StdMapBuffer<MapPolicy>
+	typename BufferPolicy = DataBuffer::StdMapVectorBuffer<MapPolicy>
 >
 class Job
 {
 public:
+	typedef typename BufferPolicy::ReduceIterator ReduceIteratorType;
+
 	class MapTaskRunner
 	{
 	public:
-		inline void Emit(typename MapPolicy::IntermediateKeyType& key, typename MapPolicy::IntermediateValueType& value)
+		inline void Emit(typename MapPolicy::IntermediateKeyType key, typename MapPolicy::IntermediateValueType value)
 		{
+			m_dataBuffer->AddData(key, value);
 		}
 
 	private:
@@ -47,8 +50,9 @@ public:
 	class ReduceTaskRunner
 	{
 	public:
-		inline void Emit(typename ReducePolicy::KeyType& key, typename ReducePolicy::ValueType& value)
+		inline void Emit(typename ReducePolicy::KeyType key, typename ReducePolicy::ValueType value)
 		{
+			m_dataDrain->AddData(key, value);
 		}
 
 	private:
@@ -85,20 +89,22 @@ public:
 
 		// Map it
 		MapPolicy mapClass;
-		typename MapPolicy::KeyType* sourceKey = nullptr;
-		typename MapPolicy::ValueType* sourceValue = nullptr;
-		while (source.GetData(*sourceKey, *sourceValue)) 
+		typename MapPolicy::KeyType sourceKey;
+		typename MapPolicy::ValueType sourceValue;
+		while (source.GetData(sourceKey, sourceValue)) 
 		{
-			mapClass.Map(*m_mapRunner, *sourceKey, *sourceValue);
+			mapClass.Map(*m_mapRunner, sourceKey, sourceValue);
 		}
 
 		// Reduce it
 		ReducePolicy reduceClass;
-		typename MapPolicy::IntermediateKeyType* intermitKey = nullptr;
-		typename MapPolicy::IntermediateValueType* intermitValue = nullptr;
-		while (m_dataBuffer->GetData(*intermitKey, *intermitValue))
+		typename MapPolicy::IntermediateKeyType intermitKey;
+		typename ReduceIteratorType iterStart;
+		typename ReduceIteratorType iterEnd;
+
+		while (m_dataBuffer->GetData(intermitKey, iterStart, iterEnd))
 		{
-			reduceClass.Reduce(*m_reduceRunner, *intermitKey, *intermitValue);
+			reduceClass.Reduce(*m_reduceRunner, intermitKey, iterStart, iterEnd);
 		}
 	}
 

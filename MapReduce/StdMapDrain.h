@@ -23,9 +23,9 @@ public:
 		typename ReducePolicy::KeyType, 
 		typename ReducePolicy::ValueType
 	>
-	InputMapType;
+	InputType;
 
-	StdMapDrain(InputMapType* destinationMap) :
+	StdMapDrain(InputType* destinationMap) :
 		m_dest(destinationMap)
 	{
 	}
@@ -39,7 +39,7 @@ public:
 	}
 
 private:
-	InputMapType* m_dest;
+	InputType* m_dest;
 	std::mutex m_destMutex;
 };
 

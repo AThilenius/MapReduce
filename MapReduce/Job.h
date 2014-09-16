@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include "StdMapSource.h"
 #include "StdMapDrain.h"
+#include "StdMapSource.h"
 #include "StdMapVectorBuffer.h"
 
 namespace Thilenius {
@@ -20,12 +20,11 @@ template<
 >
 void _MapThread(Job* job)
 {
-	//Job& job = *((Job*) jobPrt);
 	typename Job::MapPolicyType mapClass;
 	typename Job::MapPolicyType::KeyType sourceKey;
 	typename Job::MapPolicyType::ValueType sourceValue;
-	while (job->m_source.GetData(sourceKey, sourceValue)) 
-		mapClass.Map(*job->m_mapRunner, sourceKey, sourceValue);
+	while (job->m_source->GetData(sourceKey, sourceValue)) 
+		mapClass.Map<typename Job::MapTaskRunner>(*job->m_mapRunner, sourceKey, sourceValue);
 }
 
 template<
@@ -33,13 +32,12 @@ template<
 >
 void _ReduceThread(Job* job)
 {
-	//Job& job = *((Job*) jobPrt);
 	typename Job::ReducePolicyType reduceClass;
 	typename Job::MapPolicyType::IntermediateKeyType intermitKey;
 	typename Job::ReduceIteratorType iterStart;
 	typename Job::ReduceIteratorType iterEnd;
 	while (job->m_dataBuffer->GetData(intermitKey, iterStart, iterEnd))
-		reduceClass.Reduce(*job->m_reduceRunner, intermitKey, iterStart, iterEnd);
+		reduceClass.Reduce<typename Job::ReduceTaskRunner, typename Job::ReduceIteratorType>(*job->m_reduceRunner, intermitKey, iterStart, iterEnd);
 }
 
 
@@ -55,6 +53,8 @@ class Job
 public:
 	typedef typename MapPolicy MapPolicyType;
 	typedef typename ReducePolicy ReducePolicyType;
+	typedef typename SourcePolicy::InputType SourceInputType;
+	typedef typename DrainPolicy::InputType DrainInputType;
 	typedef typename BufferPolicy::ReduceIterator ReduceIteratorType;
 
 	class MapTaskRunner
@@ -95,16 +95,16 @@ public:
 		DrainPolicy* m_dataDrain;
 	};
 
-	Job(SourcePolicy& source, DrainPolicy& drain) :
+	Job(SourceInputType& source, DrainInputType& drain) :
 		m_dataBuffer(new BufferPolicy()),
 		m_mapRunner(new MapTaskRunner()),
 		m_reduceRunner(new ReduceTaskRunner()),
-		m_source(source),
-		m_drain(drain)
+		m_source(new SourcePolicy(&source)),
+		m_drain(new DrainPolicy(&drain))
 	{
 		// Set up the runners
 		m_mapRunner->m_dataBuffer = m_dataBuffer;
-		m_reduceRunner->m_dataDrain = &m_drain;
+		m_reduceRunner->m_dataDrain = m_drain;
 	}
 
 	~Job()
@@ -112,38 +112,17 @@ public:
 		SAFE_FREE(m_mapRunner);
 		SAFE_FREE(m_reduceRunner);
 		SAFE_FREE(m_dataBuffer);
-	}
-
-	// Runs the full map reduce
-	void Run()
-	{
-		// Map it
-		MapPolicy mapClass;
-		typename MapPolicy::KeyType sourceKey;
-		typename MapPolicy::ValueType sourceValue;
-		while (m_source.GetData(sourceKey, sourceValue)) 
-		{
-			mapClass.Map(*m_mapRunner, sourceKey, sourceValue);
-		}
-
-		// Reduce it
-		ReducePolicy reduceClass;
-		typename MapPolicy::IntermediateKeyType intermitKey;
-		typename ReduceIteratorType iterStart;
-		typename ReduceIteratorType iterEnd;
-
-		while (m_dataBuffer->GetData(intermitKey, iterStart, iterEnd))
-		{
-			reduceClass.Reduce(*m_reduceRunner, intermitKey, iterStart, iterEnd);
-		}
+		SAFE_FREE(m_source);
+		SAFE_FREE(m_drain);
 	}
 
 private:
+	// Owned
 	MapTaskRunner* m_mapRunner;
 	ReduceTaskRunner* m_reduceRunner;
 	BufferPolicy* m_dataBuffer;
-	SourcePolicy& m_source;
-	DrainPolicy& m_drain;
+	SourcePolicy* m_source;
+	DrainPolicy* m_drain;
 
 	template<typename J>
 	friend void _MapThread(J* job);

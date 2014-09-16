@@ -29,10 +29,10 @@ public:
 	typedef std::string IntermediateKeyType;
 	typedef int IntermediateValueType;
 
-	void Map(
-		TokenizeFilesJob::MapTaskRunner& runner, 
-		MapTask::KeyType& key, 
-		MapTask::ValueType& value)
+	template<
+		typename Runner
+	>
+	void Map(Runner& runner, KeyType& key, ValueType& value)
 	{
 		std::istringstream stream (key);
 		std::string subString;    
@@ -47,11 +47,11 @@ public:
 	typedef std::string  KeyType;
 	typedef int  ValueType;
 
-	void Reduce(
-		TokenizeFilesJob::ReduceTaskRunner& runner, 
-		ReduceTask::KeyType& key, 
-		TokenizeFilesJob::ReduceIteratorType& begin, 
-		TokenizeFilesJob::ReduceIteratorType& end)
+	template<
+		typename Runner,
+		typename ItorType
+	>
+	void Reduce(Runner& runner, KeyType& key, ItorType& begin, ItorType& end)
 	{
 		int count = 0;
 		for(; begin != end; begin++)
@@ -67,16 +67,13 @@ void main()
 {
 	std::unordered_map<std::string, int> sourceMap;
 	std::unordered_map<std::string, int> outputMap;
-	Thilenius::MapReduce::DataSource::StdMapSource<Thilenius::MapTask> source (&sourceMap);
-	Thilenius::MapReduce::DataDrain::StdMapDrain<Thilenius::ReduceTask> drain (&outputMap);
 
 	// Fill the Source with crap
 	sourceMap.insert(std::pair<std::string, int>("Hello from me", 1));
 	sourceMap.insert(std::pair<std::string, int>("another message from me", 1));
 	sourceMap.insert(std::pair<std::string, int>("me should show up 3 times", 1));
 
-	Thilenius::TokenizeFilesJob job(source, drain);
-	//job.Run();
+	Thilenius::TokenizeFilesJob job(sourceMap, outputMap);
 
 	Thilenius::MapReduce::ThreadedJobScheduler s;
 	s.RunJob<Thilenius::TokenizeFilesJob>(job);

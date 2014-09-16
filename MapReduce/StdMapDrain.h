@@ -18,13 +18,13 @@ template<
 >
 class StdMapDrain
 {
+public:
 	typedef std::unordered_map<
 		typename ReducePolicy::KeyType, 
 		typename ReducePolicy::ValueType
 	>
 	InputMapType;
 
-public:
 	StdMapDrain(InputMapType* destinationMap) :
 		m_dest(destinationMap)
 	{
@@ -32,11 +32,10 @@ public:
 
 	inline void AddData(typename ReducePolicy::KeyType& key, typename ReducePolicy::ValueType& value)
 	{
-		m_destMutex.lock();
+		std::lock_guard<std::mutex> guard(m_destMutex);
 		m_dest->insert(std::make_pair<
 			typename ReducePolicy::KeyType, 
 			typename ReducePolicy::ValueType>(key, value));
-		m_destMutex.unlock();
 	}
 
 private:

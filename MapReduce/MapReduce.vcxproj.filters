@@ -14,6 +14,9 @@
     <Filter Include="MapReduce\DataSource">
       <UniqueIdentifier>{fa63bb7f-4cd9-4368-8e66-65f02bf201b8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="MapReduce\DataBuffer">
+      <UniqueIdentifier>{c22cb96d-4213-4f60-b097-6213fa5a6e94}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -26,11 +29,8 @@
     <ClInclude Include="Job.h">
       <Filter>MapReduce</Filter>
     </ClInclude>
-    <ClInclude Include="MapTaskRunner.h">
-      <Filter>MapReduce</Filter>
-    </ClInclude>
-    <ClInclude Include="ReduceTaskRunner.h">
-      <Filter>MapReduce</Filter>
+    <ClInclude Include="StdMapBuffer.h">
+      <Filter>MapReduce\DataBuffer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

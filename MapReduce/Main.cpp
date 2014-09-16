@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
 #include <iostream>
-#include <map>
+#include <unordered_map>
 #include <string>
 
 #include "Job.h"
@@ -26,9 +26,9 @@ public:
 	typedef int IntermediateKeyType;
 	typedef int IntermediateValueType;
 
-	bool Map(TokenizeFilesJob::MapTaskRunner& runner, MapTask::KeyType& key, MapTask::ValueType& value)
+	void Map(TokenizeFilesJob::MapTaskRunner& runner, MapTask::KeyType& key, MapTask::ValueType& value)
 	{
-
+		runner.Emit(key, value);
 	}
 };
 
@@ -38,9 +38,9 @@ public:
 	typedef int  KeyType;
 	typedef int  ValueType;
 
-	bool Reduce(TokenizeFilesJob::ReduceTaskRunner& runner, ReduceTask::KeyType& key, ReduceTask::ValueType& value)
+	void Reduce(TokenizeFilesJob::ReduceTaskRunner& runner, ReduceTask::KeyType& key, ReduceTask::ValueType& value)
 	{
-
+		runner.Emit(key, value);
 	}
 };
 
@@ -48,10 +48,13 @@ public:
 
 void main()
 {
-	std::map<std::string, int> sourceMap;
-	std::map<std::string, int> outputMap;
+	std::unordered_map<int, int> sourceMap;
+	std::unordered_map<int, int> outputMap;
+	Thilenius::MapReduce::DataSource::StdMapSource<Thilenius::MapTask> source (&sourceMap);
+	Thilenius::MapReduce::DataDrain::StdMapDrain<Thilenius::ReduceTask> drain (&outputMap);
 
 	Thilenius::TokenizeFilesJob job;
+	job.Run(source, drain);
 
 	std::cin.ignore();
 }

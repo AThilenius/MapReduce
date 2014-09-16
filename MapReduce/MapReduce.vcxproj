@@ -45,6 +45,8 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PrecompiledHeader>Create</PrecompiledHeader>
+      <PreprocessToFile>false</PreprocessToFile>
+      <ShowIncludes>true</ShowIncludes>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -66,9 +68,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Job.h" />
-    <ClInclude Include="MapTaskRunner.h" />
-    <ClInclude Include="ReduceTaskRunner.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="StdMapBuffer.h" />
     <ClInclude Include="StdMapDrain.h" />
     <ClInclude Include="StdMapSource.h" />
   </ItemGroup>

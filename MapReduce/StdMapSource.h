@@ -18,47 +18,40 @@ template<
 >
 class StdMapSource
 {
+public:
 	typedef std::unordered_map<
 		typename MapPolicy::KeyType, 
 		typename MapPolicy::ValueType
 	>
-	InputMapType;
+	InputType;
 
 	typedef typename std::unordered_map<
 		typename MapPolicy::KeyType, 
 		typename MapPolicy::ValueType
 	>::iterator
-	InputMapTypeIterator;
+	InputTypeIterator;
 
-public:
-	StdMapSource(InputMapType* SourceMap):
-		m_dataSource(SourceMap),
-		m_iter(SourceMap->begin()),
-		m_endIter(SourceMap->end())
+	StdMapSource(InputType* SourceMap):
+		m_dataSource(SourceMap)
 	{
 	}
 
 	inline bool GetData(typename MapPolicy::KeyType& key, typename MapPolicy::ValueType& value)
 	{
-		m_sourceMutex.lock();
-		InputMapTypeIterator being = m_dataSource->begin();
-		InputMapTypeIterator end = m_dataSource->end();
+		std::lock_guard<std::mutex> guard(m_sourceMutex);
+		InputTypeIterator begin = m_dataSource->begin();
+		InputTypeIterator end = m_dataSource->end();
 		if (begin == end)
-		{
-			m_sourceMutex.unlock();
 			return false;
-		}
 
-		key = being->first;
-		value = being->second;
+		key = begin->first;
+		value = begin->second;
 		m_dataSource->erase(begin);
-
-		m_sourceMutex.unlock();
 		return true;
 	}
 
 private:
-	InputMapType* m_dataSource;
+	InputType* m_dataSource;
 	std::mutex m_sourceMutex;
 };
 

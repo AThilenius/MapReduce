@@ -1,0 +1,1 @@
+#define SAFE_FREE(ptr) if (ptr != nullptr) {free(ptr); ptr = nullptr;}

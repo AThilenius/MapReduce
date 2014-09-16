@@ -6,6 +6,8 @@
 #include <sstream>
 
 #include "Job.h"
+#include "JobScheduler.h"
+#include "ThreadedJobScheduler.h"
 
 namespace Thilenius {
 
@@ -73,8 +75,11 @@ void main()
 	sourceMap.insert(std::pair<std::string, int>("another message from me", 1));
 	sourceMap.insert(std::pair<std::string, int>("me should show up 3 times", 1));
 
-	Thilenius::TokenizeFilesJob job;
-	job.Run(source, drain);
+	Thilenius::TokenizeFilesJob job(source, drain);
+	//job.Run();
+
+	Thilenius::MapReduce::ThreadedJobScheduler s;
+	s.RunJob<Thilenius::TokenizeFilesJob>(job);
 
 	std::cin.ignore();
 }

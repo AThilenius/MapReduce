@@ -32,6 +32,12 @@
     <ClInclude Include="StdMapVectorBuffer.h">
       <Filter>MapReduce\DataBuffer</Filter>
     </ClInclude>
+    <ClInclude Include="JobScheduler.h">
+      <Filter>MapReduce</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadedJobScheduler.h">
+      <Filter>MapReduce</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />

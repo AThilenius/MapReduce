@@ -15,6 +15,33 @@ namespace Thilenius {
 namespace MapReduce { 
 
 
+template<
+	typename Job
+>
+void _MapThread(Job* job)
+{
+	//Job& job = *((Job*) jobPrt);
+	typename Job::MapPolicyType mapClass;
+	typename Job::MapPolicyType::KeyType sourceKey;
+	typename Job::MapPolicyType::ValueType sourceValue;
+	while (job->m_source.GetData(sourceKey, sourceValue)) 
+		mapClass.Map(*job->m_mapRunner, sourceKey, sourceValue);
+}
+
+template<
+	typename Job
+>
+void _ReduceThread(Job* job)
+{
+	//Job& job = *((Job*) jobPrt);
+	typename Job::ReducePolicyType reduceClass;
+	typename Job::MapPolicyType::IntermediateKeyType intermitKey;
+	typename Job::ReduceIteratorType iterStart;
+	typename Job::ReduceIteratorType iterEnd;
+	while (job->m_dataBuffer->GetData(intermitKey, iterStart, iterEnd))
+		reduceClass.Reduce(*job->m_reduceRunner, intermitKey, iterStart, iterEnd);
+}
+
 
 template<
 	typename MapPolicy,
@@ -26,6 +53,8 @@ template<
 class Job
 {
 public:
+	typedef typename MapPolicy MapPolicyType;
+	typedef typename ReducePolicy ReducePolicyType;
 	typedef typename BufferPolicy::ReduceIterator ReduceIteratorType;
 
 	class MapTaskRunner
@@ -66,11 +95,16 @@ public:
 		DrainPolicy* m_dataDrain;
 	};
 
-	Job() :
+	Job(SourcePolicy& source, DrainPolicy& drain) :
 		m_dataBuffer(new BufferPolicy()),
 		m_mapRunner(new MapTaskRunner()),
-		m_reduceRunner(new ReduceTaskRunner())
+		m_reduceRunner(new ReduceTaskRunner()),
+		m_source(source),
+		m_drain(drain)
 	{
+		// Set up the runners
+		m_mapRunner->m_dataBuffer = m_dataBuffer;
+		m_reduceRunner->m_dataDrain = &m_drain;
 	}
 
 	~Job()
@@ -81,17 +115,13 @@ public:
 	}
 
 	// Runs the full map reduce
-	void Run(SourcePolicy& source, DrainPolicy& drain)
+	void Run()
 	{
-		// Set up the runners
-		m_mapRunner->m_dataBuffer = m_dataBuffer;
-		m_reduceRunner->m_dataDrain = &drain;
-
 		// Map it
 		MapPolicy mapClass;
 		typename MapPolicy::KeyType sourceKey;
 		typename MapPolicy::ValueType sourceValue;
-		while (source.GetData(sourceKey, sourceValue)) 
+		while (m_source.GetData(sourceKey, sourceValue)) 
 		{
 			mapClass.Map(*m_mapRunner, sourceKey, sourceValue);
 		}
@@ -108,9 +138,18 @@ public:
 		}
 	}
 
+private:
 	MapTaskRunner* m_mapRunner;
 	ReduceTaskRunner* m_reduceRunner;
 	BufferPolicy* m_dataBuffer;
+	SourcePolicy& m_source;
+	DrainPolicy& m_drain;
+
+	template<typename J>
+	friend void _MapThread(J* job);
+
+	template<typename J>
+	friend void _ReduceThread(J* job);
 };
 
 } // namespace MapReduce

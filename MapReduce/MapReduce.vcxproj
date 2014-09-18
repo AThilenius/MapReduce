@@ -67,6 +67,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="DirectoryLoaderSource.h" />
     <ClInclude Include="Job.h" />
     <ClInclude Include="JobScheduler.h" />
     <ClInclude Include="stdafx.h" />

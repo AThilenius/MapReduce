@@ -25,22 +25,34 @@ public:
 	>
 	InputType;
 
-	StdMapDrain(InputType* destinationMap) :
-		m_dest(destinationMap)
+	StdMapDrain() :
+		m_data(new InputType())
 	{
 	}
 
+	StdMapDrain(InputType* destinationMap) :
+		m_data(destinationMap)
+	{
+	}
+
+	// Access from any thread
+	inline void Combine(typename StdMapDrain<typename ReducePolicy>* other)
+	{
+		std::lock_guard<std::mutex> guard(m_mutex);
+		m_data->insert (other->m_data->begin(), other->m_data->end()); 
+	}
+
+	// Access from single thread only
 	inline void AddData(typename ReducePolicy::KeyType key, typename ReducePolicy::ValueType value)
 	{
-		std::lock_guard<std::mutex> guard(m_destMutex);
-		m_dest->insert(std::pair<
+		m_data->insert(std::pair<
 			typename ReducePolicy::KeyType, 
 			typename ReducePolicy::ValueType>(key, value));
 	}
 
 private:
-	InputType* m_dest;
-	std::mutex m_destMutex;
+	InputType* m_data;
+	std::mutex m_mutex;
 };
 
 } // namespace DataDrain

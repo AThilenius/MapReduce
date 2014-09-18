@@ -56,10 +56,15 @@ public:
 		SAFE_FREE(m_data);
 	}
 
+	// Thread Safe
+	inline void Combine(typename StdMapVectorBuffer<typename MapPolicy>* other)
+	{
+		std::lock_guard<std::mutex> guard(m_mutex);
+		m_data->insert (other->m_data->begin(), other->m_data->end()); 
+	}
+
 	inline void AddData(typename MapPolicy::IntermediateKeyType key, typename MapPolicy::IntermediateValueType value)
 	{
-		std::lock_guard<std::mutex> guard(m_dataMutex);
-
 		InputTypeConstIterator kvpLookup = m_data->find(key);
 
 		if (kvpLookup == m_data->end())
@@ -74,9 +79,10 @@ public:
 			kvpLookup->second->push_back(value);
 	}
 
+	// Thread Safe
 	inline bool GetData(typename MapPolicy::IntermediateKeyType& key, ReduceIterator& iterStart, ReduceIterator& iterEnd)
 	{
-		std::lock_guard<std::mutex> guard(m_dataMutex);
+		std::lock_guard<std::mutex> guard(m_mutex);
 		InputTypeIterator begin = m_data->begin();
 		InputTypeIterator end = m_data->end();
 		if (begin == end)
@@ -91,7 +97,7 @@ public:
 
 private:
 	InputType* m_data;
-	std::mutex m_dataMutex;
+	std::mutex m_mutex;
 };
 
 } // namespace DataStore

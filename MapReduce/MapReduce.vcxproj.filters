@@ -38,6 +38,9 @@
     <ClInclude Include="ThreadedJobScheduler.h">
       <Filter>MapReduce</Filter>
     </ClInclude>
+    <ClInclude Include="DirectoryLoaderSource.h">
+      <Filter>MapReduce\DataSource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />

@@ -8,7 +8,7 @@
 #pragma once
 
 #include "StdMapSource.h"
-#include "DirectoryLoaderSource.h"
+#include "FileLoaderSource.h"
 #include "StdMapDrain.h"
 #include "StdMapVectorBuffer.h"
 
@@ -26,7 +26,7 @@ void _MapThread(Job* job)
 	typename Job::MapPolicyType::ValueType sourceValue;
 	Job::MapTaskRunner* runner = new Job::MapTaskRunner();
 
-	while (job->m_source->GetData(sourceKey, sourceValue)) 
+	while (job->m_source->GetData(sourceKey, sourceValue))
 		mapClass.Map<typename Job::MapTaskRunner>(*runner, sourceKey, sourceValue);
 
 	// Combine results back into primary buffer
@@ -56,7 +56,7 @@ void _ReduceThread(Job* job)
 template<
 	typename MapPolicy,
 	typename ReducePolicy,
-	typename SourcePolicy = DataSource::DirectoryLoaderSource<MapPolicy>,
+	typename SourcePolicy = DataSource::FileLoaderSource<MapPolicy>,
 	typename DrainPolicy = DataDrain::StdMapDrain<ReducePolicy>,
 	typename BufferPolicy = DataBuffer::StdMapVectorBuffer<MapPolicy>
 >

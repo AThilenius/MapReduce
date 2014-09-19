@@ -3,80 +3,82 @@
 #include <iostream>
 #include <unordered_map>
 #include <string>
+#include <fstream>
 #include <sstream>
 
 #include "Job.h"
 #include "JobScheduler.h"
 #include "ThreadedJobScheduler.h"
+#include "SelectFirstReducer.h"
 
 namespace Thilenius {
+namespace MapReduce {
 
 class MapTask;
 class ReduceTask;
 
 typedef
-	MapReduce::Job<
+MapReduce::Job<
 	MapTask,
-	ReduceTask>
+	Reducers::SelectFirstReducer<MapTask>
+>
 TokenizeFilesJob;
 
 
 class MapTask
 {
 public:
-	typedef std::string KeyType;
-	typedef int ValueType;
-	typedef std::string IntermediateKeyType;
-	typedef int IntermediateValueType;
+	typedef std::string		KeyType;
+	typedef std::ifstream*	ValueType;
+	typedef std::string		IntermediateKeyType;
+	typedef std::string		IntermediateValueType;
 
 	template<
 		typename Runner
 	>
 	void Map(Runner& runner, KeyType& key, ValueType& value)
 	{
-		std::istringstream stream (key);
-		std::string subString;    
-		while (std::getline(stream, subString, ' '))
-			runner.Emit(subString, 1);
+		std::string word;
+		while(*value >> word)
+			runner.Emit(word, "");
 	}
 };
 
-class ReduceTask
-{
-public:
-	typedef std::string  KeyType;
-	typedef int  ValueType;
+//class ReduceTask
+//{
+//public:
+//	typedef std::string		KeyType;
+//	typedef std::string		ValueType;
+//
+//	template<
+//		typename Runner,
+//		typename ItorType
+//	>
+//	void Reduce(Runner& runner, KeyType& key, ItorType& begin, ItorType& end)
+//	{
+//		for(; begin != end; begin++)
+//			runner.Emit(key, *begin);
+//	}
+//};
 
-	template<
-		typename Runner,
-		typename ItorType
-	>
-	void Reduce(Runner& runner, KeyType& key, ItorType& begin, ItorType& end)
-	{
-		int count = 0;
-		for(; begin != end; begin++)
-			count++;
-
-		runner.Emit(key, count);
-	}
-};
-
+} // namespace MapReduce
 } // namespace Thilenius
 
 void main()
 {
-	std::unordered_map<std::string, int> sourceMap;
-	std::unordered_map<std::string, int> outputMap;
 
-	// Fill the Source with crap
-	sourceMap.insert(std::pair<std::string, int>("Hello from me", 1));
-	sourceMap.insert(std::pair<std::string, int>("another message from me", 1));
-	sourceMap.insert(std::pair<std::string, int>("me should show up 3 times", 1));
+	std::ifstream* stream = new std::ifstream("C:\\Users\\Alec\\Desktop\\names1.txt");
+	std::string word;
+	while(*stream >> word)
+		std::cout << word << std::endl;
 
-	Thilenius::TokenizeFilesJob job(sourceMap, outputMap);
+	std::string inputTokens ("C:\\Users\\Alec\\Desktop\\names1.txt");
+	std::unordered_map<std::string, std::string> outputMap;
 
-	Thilenius::MapReduce::ThreadedJobScheduler s;
-	s.RunJob<Thilenius::TokenizeFilesJob>(job);
+	Thilenius::MapReduce::TokenizeFilesJob job(inputTokens, outputMap);
+
+	Thilenius::MapReduce::JobScheduler scheduler;
+	scheduler.RunJob<Thilenius::MapReduce::TokenizeFilesJob>(job);
 
 	std::cin.ignore();
 }

@@ -60,7 +60,27 @@ public:
 	inline void Combine(typename StdMapVectorBuffer<typename MapPolicy>* other)
 	{
 		std::lock_guard<std::mutex> guard(m_mutex);
-		m_data->insert (other->m_data->begin(), other->m_data->end()); 
+
+		// For each key in other's data
+		InputTypeIterator Otheriter = other->m_data->begin();
+		for (; Otheriter != other->m_data->end(); Otheriter++)
+		{
+			// Find that key in our data, or create it.
+			// Source Vector: Otheriter->second
+			// Target Vector: kvpLookup->second or created vector
+			InputTypeConstIterator kvpLookup = m_data->find(Otheriter->first);
+
+			if (kvpLookup == m_data->end())
+			{
+				VectorType* vector = new VectorType();
+				vector->insert<ReduceIterator>(vector->end(), Otheriter->second->begin(), Otheriter->second->end());
+				m_data->insert(std::pair<
+					typename MapPolicy::IntermediateKeyType,
+					VectorType*>(Otheriter->first, vector));
+			}
+			else
+				kvpLookup->second->insert<ReduceIterator>(kvpLookup->second->end(), Otheriter->second->begin(), Otheriter->second->end());
+		}
 	}
 
 	inline void AddData(typename MapPolicy::IntermediateKeyType key, typename MapPolicy::IntermediateValueType value)

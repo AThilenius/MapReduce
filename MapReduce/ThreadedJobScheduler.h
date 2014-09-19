@@ -1,5 +1,5 @@
 //
-//  ThreadedJobScheduler.h
+//  FileLoaderSource.h
 //
 //  Created by Alec Thilenius on 9/15/2014.
 //  Copyright (c) 2013 Thilenius. All rights reserved.
@@ -15,7 +15,7 @@ namespace Thilenius {
 namespace MapReduce { 
 
 
-class ThreadedJobScheduler
+class FileLoaderSource
 {
 public:
 	template<

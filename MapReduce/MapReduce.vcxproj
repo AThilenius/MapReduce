@@ -67,9 +67,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="DirectoryLoaderSource.h" />
+    <ClInclude Include="FileLoaderSource.h" />
     <ClInclude Include="Job.h" />
     <ClInclude Include="JobScheduler.h" />
+    <ClInclude Include="SelectFirstReducer.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StdMapVectorBuffer.h" />
     <ClInclude Include="StdMapDrain.h" />

@@ -59,6 +59,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -70,6 +71,7 @@
     <ClInclude Include="FileLoaderSource.h" />
     <ClInclude Include="Job.h" />
     <ClInclude Include="JobScheduler.h" />
+    <ClInclude Include="LockstepTaskRunner.h" />
     <ClInclude Include="SelectFirstReducer.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StdMapVectorBuffer.h" />

@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <mutex>
 #include <vector>
+#include <atomic>
 
 namespace Thilenius {
 namespace MapReduce { 
@@ -23,31 +24,58 @@ public:
 	typedef std::vector<
 		typename MapPolicy::IntermediateValueType
 	>
-	VectorType;
+	ValueVectorType;
 
 	typedef std::unordered_map<
 		typename MapPolicy::IntermediateKeyType, 
-		VectorType*
+		ValueVectorType*
 	>
 	InputType;
 
 	typedef typename std::unordered_map<
 		typename MapPolicy::IntermediateKeyType, 
-		VectorType*
+		ValueVectorType*
 	>::iterator
 	InputTypeIterator;
 
 	typedef typename std::unordered_map<
 		typename MapPolicy::IntermediateKeyType, 
-		VectorType*
+		ValueVectorType*
 	>::const_iterator
 	InputTypeConstIterator;
 
-	typedef typename VectorType::iterator
-	ReduceIterator;
+	typedef typename ValueVectorType::iterator
+	ValueVectorIteratorType;
+
+	template<
+		typename KeyType,
+		typename ValueType
+	>
+	struct Tupple
+	{
+		Tupple(KeyType key, ValueType value) :
+			Key(key),
+			Value(value)
+		{
+		}
+		typename KeyType Key;
+		typename ValueType Value;
+	};
+
+	typedef typename Tupple<
+		typename MapPolicy::IntermediateKeyType,
+		std::vector<typename MapPolicy::IntermediateValueType>*
+	>
+	TupleType;
+
+	typedef typename std::vector<
+		TupleType
+	>
+	VectorOfTupplesType;
 
 	StdMapVectorBuffer():
-		m_data(new InputType())
+		m_data(new InputType()),
+		m_drainData(nullptr)
 	{
 	}
 
@@ -56,7 +84,7 @@ public:
 		SAFE_FREE(m_data);
 	}
 
-	// Thread Safe
+	// Mutex, Thread Safe
 	inline void Combine(typename StdMapVectorBuffer<typename MapPolicy>* other)
 	{
 		std::lock_guard<std::mutex> guard(m_mutex);
@@ -72,14 +100,14 @@ public:
 
 			if (kvpLookup == m_data->end())
 			{
-				VectorType* vector = new VectorType();
-				vector->insert<ReduceIterator>(vector->end(), Otheriter->second->begin(), Otheriter->second->end());
+				ValueVectorType* vector = new ValueVectorType();
+				vector->insert<ValueVectorIteratorType>(vector->end(), Otheriter->second->begin(), Otheriter->second->end());
 				m_data->insert(std::pair<
 					typename MapPolicy::IntermediateKeyType,
-					VectorType*>(Otheriter->first, vector));
+					ValueVectorType*>(Otheriter->first, vector));
 			}
 			else
-				kvpLookup->second->insert<ReduceIterator>(kvpLookup->second->end(), Otheriter->second->begin(), Otheriter->second->end());
+				kvpLookup->second->insert<ValueVectorIteratorType>(kvpLookup->second->end(), Otheriter->second->begin(), Otheriter->second->end());
 		}
 	}
 
@@ -89,35 +117,50 @@ public:
 
 		if (kvpLookup == m_data->end())
 		{
-			VectorType* vector = new VectorType();
+			ValueVectorType* vector = new ValueVectorType();
 			vector->push_back(value);
 			m_data->insert(std::pair<
 				typename MapPolicy::IntermediateKeyType,
-				VectorType*>(key, vector));
+				ValueVectorType*>(key, vector));
 		}
 		else
 			kvpLookup->second->push_back(value);
 	}
 
-	// Thread Safe
-	inline bool GetData(typename MapPolicy::IntermediateKeyType& key, ReduceIterator& iterStart, ReduceIterator& iterEnd)
+	inline void Shuffle()
 	{
-		std::lock_guard<std::mutex> guard(m_mutex);
-		InputTypeIterator begin = m_data->begin();
-		InputTypeIterator end = m_data->end();
-		if (begin == end)
+		m_drainData = new VectorOfTupplesType();
+
+		for (InputTypeIterator iter = m_data->begin(); iter != m_data->end(); iter++)
+			m_drainData->push_back(TupleType(iter->first, iter->second));
+
+		m_currentIndex = 0;
+		m_maxIndex = m_drainData->size() - 1;
+	}
+
+	// Lockless, thread safe
+	inline bool GetData(typename MapPolicy::IntermediateKeyType& key, ValueVectorIteratorType& iterStart, ValueVectorIteratorType& iterEnd)
+	{
+		int thisIndex = std::atomic_fetch_add(&m_currentIndex, 1);
+
+		if (thisIndex > m_maxIndex)
 			return false;
 
-		key = begin->first;
-		iterStart = begin->second->begin();
-		iterEnd = begin->second->end();
-		m_data->erase(begin);
+		key = (*m_drainData)[thisIndex].Key;
+		iterStart = (*m_drainData)[thisIndex].Value->begin();
+		iterEnd = (*m_drainData)[thisIndex].Value->end();
 		return true;
 	}
 
 private:
+	// Source
 	InputType* m_data;
 	std::mutex m_mutex;
+
+	// Drain
+	VectorOfTupplesType* m_drainData;
+	std::atomic<int> m_currentIndex;
+	int m_maxIndex;
 };
 
 } // namespace DataStore

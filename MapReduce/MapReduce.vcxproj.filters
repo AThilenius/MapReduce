@@ -20,6 +20,9 @@
     <Filter Include="MapReduce\Reducers">
       <UniqueIdentifier>{5e0f27f3-d6e7-4f41-9afd-e0f824ecc726}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Threading">
+      <UniqueIdentifier>{5fbeed55-4d2f-46e3-bd7b-e076b4c28fd7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -46,6 +49,9 @@
     </ClInclude>
     <ClInclude Include="SelectFirstReducer.h">
       <Filter>MapReduce\Reducers</Filter>
+    </ClInclude>
+    <ClInclude Include="LockstepTaskRunner.h">
+      <Filter>Threading</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

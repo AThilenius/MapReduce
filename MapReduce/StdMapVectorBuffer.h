@@ -118,6 +118,7 @@ public:
 		if (kvpLookup == m_data->end())
 		{
 			ValueVectorType* vector = new ValueVectorType();
+			vector->reserve(100);
 			vector->push_back(value);
 			m_data->insert(std::pair<
 				typename MapPolicy::IntermediateKeyType,

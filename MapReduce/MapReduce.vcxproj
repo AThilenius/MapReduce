@@ -38,7 +38,14 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>C:\Users\Alec\Documents\Development\redis-2.8\src;C:\Users\Alec\Documents\Development\redis-2.8\deps\hiredis;C:\Users\Alec\Documents\Development\redis-2.8\src\Win32_Interop;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Alec\Documents\Development\redis-2.8\msvs\Debug;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>C:\Users\Alec\Documents\Development\redis-2.8\src;C:\Users\Alec\Documents\Development\redis-2.8\deps\hiredis;C:\Users\Alec\Documents\Development\redis-2.8\src\Win32_Interop;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Alec\Documents\Development\redis-2.8\msvs\Debug;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -47,9 +54,12 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PreprocessToFile>false</PreprocessToFile>
       <ShowIncludes>true</ShowIncludes>
+      <AdditionalIncludeDirectories>C:\Users\Alec\Documents\Development\redis-2.8\src;C:\Users\Alec\Documents\Development\redis-2.8\deps\hiredis;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>NotSet</SubSystem>
+      <AdditionalDependencies>ws2_32.lib;hiredis.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -60,11 +70,14 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PrecompiledHeader>Create</PrecompiledHeader>
+      <AdditionalIncludeDirectories>C:\Users\Alec\Documents\Development\redis-2.8\src;C:\Users\Alec\Documents\Development\redis-2.8\deps\hiredis;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <SubSystem>NotSet</SubSystem>
+      <AdditionalDependencies>ws2_32.lib;hiredis.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -73,6 +86,7 @@
     <ClInclude Include="JobScheduler.h" />
     <ClInclude Include="LockstepTaskRunner.h" />
     <ClInclude Include="SelectFirstReducer.h" />
+    <ClInclude Include="StackAllocator.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StdMapVectorBuffer.h" />
     <ClInclude Include="StdMapDrain.h" />

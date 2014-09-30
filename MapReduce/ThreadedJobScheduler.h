@@ -67,27 +67,21 @@ public:
 		std::thread* threads = new std::thread[coresCount];
 
 		// Map
-		std::cout << "Mapping on " << coresCount << " threads." << std::endl;
 		for (int i = 0; i < coresCount; i++)
 			threads[i] = std::thread(_MapThread<Job>, &job);
 
 		for (int i = 0; i < coresCount; i++)
 			threads[i].join();
-		std::cout << "Done Mapping" << std::endl;
 
 		// Shuffle
-		std::cout << "Shuffling" << std::endl;
 		job.Shuffle();
-		std::cout << "Done Shuffling" << std::endl;
 
 		// Reduce
-		std::cout << "Reducing on " << coresCount << " threads." << std::endl;
 		for (int i = 0; i < coresCount; i++)
 			threads[i] = std::thread(_ReduceThread<Job>, &job);
 
 		for (int i = 0; i < coresCount; i++)
 			threads[i].join();
-		std::cout << "Done Reducing" << std::endl;
 
 		delete[] threads;
 	}

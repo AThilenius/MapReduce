@@ -60,6 +60,9 @@ public:
 		// Map it
 		_MapTask<typename Job>(&job);
 
+		// Shuffle it
+		job.Shuffle();
+
 		// Reduce it
 		_ReduceTask<typename Job>(&job);
 	}

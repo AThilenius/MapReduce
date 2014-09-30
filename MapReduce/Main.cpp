@@ -6,12 +6,13 @@
 #include <fstream>
 #include <sstream>
 #include <functional>
+#include <ctime>
+#include <streambuf>
 
 #include "Job.h"
 #include "JobScheduler.h"
 #include "ThreadedJobScheduler.h"
-#include "SelectFirstReducer.h"
-#include "LockstepTaskRunner.h"
+#include "StdMapSource.h"
 
 namespace Thilenius {
 namespace MapReduce {
@@ -22,7 +23,8 @@ class ReduceTask;
 typedef
 MapReduce::Job<
 	MapTask,
-	ReduceTask
+	ReduceTask,
+	DataSource::StdMapSource<MapTask>
 	//Reducers::SelectFirstReducer<MapTask>
 >
 TokenizeFilesJob;
@@ -32,7 +34,7 @@ class MapTask
 {
 public:
 	typedef std::string		KeyType;
-	typedef std::ifstream*	ValueType;
+	typedef std::string		ValueType;
 	typedef std::string		IntermediateKeyType;
 	typedef int				IntermediateValueType;
 
@@ -41,10 +43,25 @@ public:
 	>
 	void Map(Runner& runner, KeyType& key, ValueType& value)
 	{
-		std::string word;
-		while(*value >> word)
-			runner.Emit(word, 0);
+		int bufferIndex = 0;
+		char* wordBuffer = new char[256];
+
+		for (int i = 0; i < value.size(); i++)
+		{
+			char thisChar = value[i];
+
+			if (thisChar == '\n')
+			{
+				wordBuffer[bufferIndex] = NULL;
+				runner.Emit(std::string(wordBuffer), 1);
+				bufferIndex = 0;
+				continue;
+			}
+
+			wordBuffer[bufferIndex++] = thisChar;
+		}
 	}
+
 };
 
 class ReduceTask
@@ -75,22 +92,78 @@ void _OneArgFunction(int a1){}
 
 void main()
 {
-	std::string inputTokens (
-		"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile1.txt "
-		"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile2.txt "
-		"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile3.txt "
-		"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile4.txt "
-		"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile5.txt "
-		"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile6.txt "
-		"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile7.txt "
-		"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile8.txt");
-	std::unordered_map<std::string, int> outputMap;
+	//test();
 
-	Thilenius::MapReduce::TokenizeFilesJob job(inputTokens, outputMap);
+	//std::string inputTokens (
+	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile1.txt "
+	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile2.txt "
+	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile3.txt "
+	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile4.txt "
+	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile5.txt "
+	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile6.txt "
+	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile7.txt "
+	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile8.txt "
+	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile9.txt "
+	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile10.txt "
+	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile11.txt "
+	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile12.txt "
+	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile13.txt "
+	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile14.txt "
+	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile15.txt "
+	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile16.txt");
 
-	Thilenius::MapReduce::ThreadedJobScheduler scheduler;
-	scheduler.RunJob(job);
+	//std::unordered_map<std::string, std::string> cachedFiles;
+	//std::unordered_map<std::string, std::string> cachedFiles2;
 
-	std::cout << "MapReduced " << outputMap.size() << " unique values." << std::endl;
+	//// Cache all file data in-memory
+	//std::cout << "Pre Caching..." << std::endl;
+	//std::string filePath;
+	//std::stringstream ss(inputTokens);
+	//while (ss >> filePath)
+	//{
+	//	std::ifstream fileStream (filePath);
+	//	std::string str;
+
+	//	// Pre-alloc memory
+	//	fileStream.seekg(0, std::ios::end);
+	//	str.reserve(fileStream.tellg());
+	//	fileStream.seekg(0, std::ios::beg);
+
+	//	str.assign((std::istreambuf_iterator<char>(fileStream)),
+	//				std::istreambuf_iterator<char>());
+
+	//	cachedFiles.insert(std::pair<std::string, std::string>(filePath, str));
+	//	cachedFiles2.insert(std::pair<std::string, std::string>(filePath, str));
+	//}
+
+	//std::cout << "Done. Press any key to run analysis" << std::endl;
 	//std::cin.ignore();
+
+	////std::cout << "Running single threaded" << std::endl;
+	////{
+	////	std::clock_t startSingle = std::clock();
+
+	////	std::unordered_map<std::string, int> outputMap;
+	////	Thilenius::MapReduce::TokenizeFilesJob job(cachedFiles, outputMap);
+	////	Thilenius::MapReduce::JobScheduler scheduler;
+	////	scheduler.RunJob(job);
+
+	////	std::cout << "MapReduced " << outputMap.size() << " unique values." << std::endl;
+	////	std::cout << "Singe-threaded took: "<< (( std::clock() - startSingle ) / (double) CLOCKS_PER_SEC ) << " seconds" << std::endl;
+	////}
+
+	//std::cout << "Running multi threaded" << std::endl;
+	//{
+	//	std::clock_t startMulti = std::clock();
+
+	//	std::unordered_map<std::string, int> outputMap;
+	//	Thilenius::MapReduce::TokenizeFilesJob job(cachedFiles2, outputMap);
+	//	Thilenius::MapReduce::ThreadedJobScheduler scheduler;
+	//	scheduler.RunJob(job);
+
+	//	std::cout << "MapReduced " << outputMap.size() << " unique values." << std::endl;
+	//	std::cout << "Mutli-threaded took: "<< (( std::clock() - startMulti ) / (double) CLOCKS_PER_SEC ) << " seconds" << std::endl;
+	//}
+
+	std::cin.ignore();
 }

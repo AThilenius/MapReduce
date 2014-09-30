@@ -23,6 +23,9 @@
     <Filter Include="Threading">
       <UniqueIdentifier>{5fbeed55-4d2f-46e3-bd7b-e076b4c28fd7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Memory">
+      <UniqueIdentifier>{faafc90d-7439-4f40-88bd-67e2d718d803}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -52,6 +55,9 @@
     </ClInclude>
     <ClInclude Include="LockstepTaskRunner.h">
       <Filter>Threading</Filter>
+    </ClInclude>
+    <ClInclude Include="StackAllocator.h">
+      <Filter>Memory</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

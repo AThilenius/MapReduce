@@ -94,9 +94,27 @@ int main()
 {
 	//test();
 
-	std::string inputTokens (
-                             //"/Volumes/BOOTCAMP/Users/Alec/Documents/Development/CPP/MapReduce/LargeTextGenerator/bin/Debug/LargeFile1.txt");
-							 "C:\\Users\\Alec\\Documents\\Development\\CSharp\\LargeTextGenerator\\bin\\Debug\\LargeFile1.txt "
+#ifdef __APPLE__
+	std::string inputTokens ("/Volumes/BOOTCAMP/Users/Alec/Documents/Development/CSharp/LargeTextGenerator/bin/Debug/LargeFile1.txt "
+                             "/Volumes/BOOTCAMP/Users/Alec/Documents/Development/CSharp/LargeTextGenerator/bin/Debug/LargeFile2.txt "
+                             "/Volumes/BOOTCAMP/Users/Alec/Documents/Development/CSharp/LargeTextGenerator/bin/Debug/LargeFile3.txt "
+                             "/Volumes/BOOTCAMP/Users/Alec/Documents/Development/CSharp/LargeTextGenerator/bin/Debug/LargeFile4.txt "
+                             "/Volumes/BOOTCAMP/Users/Alec/Documents/Development/CSharp/LargeTextGenerator/bin/Debug/LargeFile5.txt "
+                             "/Volumes/BOOTCAMP/Users/Alec/Documents/Development/CSharp/LargeTextGenerator/bin/Debug/LargeFile6.txt "
+                             "/Volumes/BOOTCAMP/Users/Alec/Documents/Development/CSharp/LargeTextGenerator/bin/Debug/LargeFile7.txt "
+                             "/Volumes/BOOTCAMP/Users/Alec/Documents/Development/CSharp/LargeTextGenerator/bin/Debug/LargeFile8.txt "
+                             "/Volumes/BOOTCAMP/Users/Alec/Documents/Development/CSharp/LargeTextGenerator/bin/Debug/LargeFile9.txt "
+                             "/Volumes/BOOTCAMP/Users/Alec/Documents/Development/CSharp/LargeTextGenerator/bin/Debug/LargeFile10.txt "
+                             "/Volumes/BOOTCAMP/Users/Alec/Documents/Development/CSharp/LargeTextGenerator/bin/Debug/LargeFile11.txt "
+                             "/Volumes/BOOTCAMP/Users/Alec/Documents/Development/CSharp/LargeTextGenerator/bin/Debug/LargeFile12.txt "
+                             "/Volumes/BOOTCAMP/Users/Alec/Documents/Development/CSharp/LargeTextGenerator/bin/Debug/LargeFile13.txt "
+                             "/Volumes/BOOTCAMP/Users/Alec/Documents/Development/CSharp/LargeTextGenerator/bin/Debug/LargeFile14.txt "
+                             "/Volumes/BOOTCAMP/Users/Alec/Documents/Development/CSharp/LargeTextGenerator/bin/Debug/LargeFile15.txt "
+                             "/Volumes/BOOTCAMP/Users/Alec/Documents/Development/CSharp/LargeTextGenerator/bin/Debug/LargeFile16.txt");
+#endif
+    
+#ifdef _WIN32
+	std::string inputTokens ("C:\\Users\\Alec\\Documents\\Development\\CSharp\\LargeTextGenerator\\bin\\Debug\\LargeFile1.txt "
 							 "C:\\Users\\Alec\\Documents\\Development\\CSharp\\LargeTextGenerator\\bin\\Debug\\LargeFile2.txt "
 							 "C:\\Users\\Alec\\Documents\\Development\\CSharp\\LargeTextGenerator\\bin\\Debug\\LargeFile3.txt "
 							 "C:\\Users\\Alec\\Documents\\Development\\CSharp\\LargeTextGenerator\\bin\\Debug\\LargeFile4.txt "
@@ -112,6 +130,7 @@ int main()
 							 "C:\\Users\\Alec\\Documents\\Development\\CSharp\\LargeTextGenerator\\bin\\Debug\\LargeFile14.txt "
 							 "C:\\Users\\Alec\\Documents\\Development\\CSharp\\LargeTextGenerator\\bin\\Debug\\LargeFile15.txt "
 							 "C:\\Users\\Alec\\Documents\\Development\\CSharp\\LargeTextGenerator\\bin\\Debug\\LargeFile16.txt");
+#endif
 
 	std::unordered_map<std::string, std::string> cachedFiles;
 	std::unordered_map<std::string, std::string> cachedFiles2;

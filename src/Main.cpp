@@ -95,23 +95,23 @@ int main()
 	//test();
 
 	std::string inputTokens (
-                             "/Volumes/BOOTCAMP/Users/Alec/Documents/Development/CPP/MapReduce/LargeTextGenerator/bin/Debug/LargeFile1.txt");
-	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile1.txt "
-	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile2.txt "
-	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile3.txt "
-	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile4.txt "
-	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile5.txt "
-	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile6.txt "
-	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile7.txt "
-	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile8.txt "
-	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile9.txt "
-	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile10.txt "
-	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile11.txt "
-	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile12.txt "
-	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile13.txt "
-	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile14.txt "
-	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile15.txt "
-	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile16.txt");
+                             //"/Volumes/BOOTCAMP/Users/Alec/Documents/Development/CPP/MapReduce/LargeTextGenerator/bin/Debug/LargeFile1.txt");
+							 "C:\\Users\\Alec\\Documents\\Development\\CSharp\\LargeTextGenerator\\bin\\Debug\\LargeFile1.txt "
+							 "C:\\Users\\Alec\\Documents\\Development\\CSharp\\LargeTextGenerator\\bin\\Debug\\LargeFile2.txt "
+							 "C:\\Users\\Alec\\Documents\\Development\\CSharp\\LargeTextGenerator\\bin\\Debug\\LargeFile3.txt "
+							 "C:\\Users\\Alec\\Documents\\Development\\CSharp\\LargeTextGenerator\\bin\\Debug\\LargeFile4.txt "
+							 "C:\\Users\\Alec\\Documents\\Development\\CSharp\\LargeTextGenerator\\bin\\Debug\\LargeFile5.txt "
+							 "C:\\Users\\Alec\\Documents\\Development\\CSharp\\LargeTextGenerator\\bin\\Debug\\LargeFile6.txt "
+							 "C:\\Users\\Alec\\Documents\\Development\\CSharp\\LargeTextGenerator\\bin\\Debug\\LargeFile7.txt "
+							 "C:\\Users\\Alec\\Documents\\Development\\CSharp\\LargeTextGenerator\\bin\\Debug\\LargeFile8.txt "
+							 "C:\\Users\\Alec\\Documents\\Development\\CSharp\\LargeTextGenerator\\bin\\Debug\\LargeFile9.txt "
+							 "C:\\Users\\Alec\\Documents\\Development\\CSharp\\LargeTextGenerator\\bin\\Debug\\LargeFile10.txt "
+							 "C:\\Users\\Alec\\Documents\\Development\\CSharp\\LargeTextGenerator\\bin\\Debug\\LargeFile11.txt "
+							 "C:\\Users\\Alec\\Documents\\Development\\CSharp\\LargeTextGenerator\\bin\\Debug\\LargeFile12.txt "
+							 "C:\\Users\\Alec\\Documents\\Development\\CSharp\\LargeTextGenerator\\bin\\Debug\\LargeFile13.txt "
+							 "C:\\Users\\Alec\\Documents\\Development\\CSharp\\LargeTextGenerator\\bin\\Debug\\LargeFile14.txt "
+							 "C:\\Users\\Alec\\Documents\\Development\\CSharp\\LargeTextGenerator\\bin\\Debug\\LargeFile15.txt "
+							 "C:\\Users\\Alec\\Documents\\Development\\CSharp\\LargeTextGenerator\\bin\\Debug\\LargeFile16.txt");
 
 	std::unordered_map<std::string, std::string> cachedFiles;
 	std::unordered_map<std::string, std::string> cachedFiles2;

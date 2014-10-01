@@ -58,12 +58,12 @@ public:
 			Value(value)
 		{
 		}
-		typename KeyType Key;
-		typename ValueType Value;
+		KeyType Key;
+		ValueType Value;
 	};
 
-	typedef typename Tupple<
-		typename MapPolicy::IntermediateKeyType,
+	typedef Tupple<
+        typename MapPolicy::IntermediateKeyType,
 		std::vector<typename MapPolicy::IntermediateValueType>*
 	>
 	TupleType;
@@ -85,7 +85,7 @@ public:
 	}
 
 	// Mutex, Thread Safe
-	inline void Combine(typename StdMapVectorBuffer<typename MapPolicy>* other)
+	inline void Combine(StdMapVectorBuffer<MapPolicy>* other)
 	{
 		std::lock_guard<std::mutex> guard(m_mutex);
 
@@ -101,13 +101,13 @@ public:
 			if (kvpLookup == m_data->end())
 			{
 				ValueVectorType* vector = new ValueVectorType();
-				vector->insert<ValueVectorIteratorType>(vector->end(), Otheriter->second->begin(), Otheriter->second->end());
+				vector->template insert<ValueVectorIteratorType>(vector->end(), Otheriter->second->begin(), Otheriter->second->end());
 				m_data->insert(std::pair<
 					typename MapPolicy::IntermediateKeyType,
 					ValueVectorType*>(Otheriter->first, vector));
 			}
 			else
-				kvpLookup->second->insert<ValueVectorIteratorType>(kvpLookup->second->end(), Otheriter->second->begin(), Otheriter->second->end());
+				kvpLookup->second->template insert<ValueVectorIteratorType>(kvpLookup->second->end(), Otheriter->second->begin(), Otheriter->second->end());
 		}
 	}
 

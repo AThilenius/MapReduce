@@ -90,11 +90,12 @@ public:
 
 void _OneArgFunction(int a1){}
 
-void main()
+int main()
 {
 	//test();
 
-	//std::string inputTokens (
+	std::string inputTokens (
+                             "/Volumes/BOOTCAMP/Users/Alec/Documents/Development/CPP/MapReduce/LargeTextGenerator/bin/Debug/LargeFile1.txt");
 	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile1.txt "
 	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile2.txt "
 	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile3.txt "
@@ -112,58 +113,58 @@ void main()
 	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile15.txt "
 	//	"C:\\Users\\Alec\\Documents\\Development\\CPP\\MapReduce\\LargeTextGenerator\\bin\\Debug\\LargeFile16.txt");
 
-	//std::unordered_map<std::string, std::string> cachedFiles;
-	//std::unordered_map<std::string, std::string> cachedFiles2;
+	std::unordered_map<std::string, std::string> cachedFiles;
+	std::unordered_map<std::string, std::string> cachedFiles2;
 
-	//// Cache all file data in-memory
-	//std::cout << "Pre Caching..." << std::endl;
-	//std::string filePath;
-	//std::stringstream ss(inputTokens);
-	//while (ss >> filePath)
+	// Cache all file data in-memory
+	std::cout << "Pre Caching..." << std::endl;
+	std::string filePath;
+	std::stringstream ss(inputTokens);
+	while (ss >> filePath)
+	{
+		std::ifstream fileStream (filePath);
+		std::string str;
+
+		// Pre-alloc memory
+		fileStream.seekg(0, std::ios::end);
+		str.reserve(fileStream.tellg());
+		fileStream.seekg(0, std::ios::beg);
+
+		str.assign((std::istreambuf_iterator<char>(fileStream)),
+					std::istreambuf_iterator<char>());
+
+		cachedFiles.insert(std::pair<std::string, std::string>(filePath, str));
+		cachedFiles2.insert(std::pair<std::string, std::string>(filePath, str));
+	}
+
+	std::cout << "Done. Press any key to run analysis" << std::endl;
+	std::cin.ignore();
+
+	//std::cout << "Running single threaded" << std::endl;
 	//{
-	//	std::ifstream fileStream (filePath);
-	//	std::string str;
-
-	//	// Pre-alloc memory
-	//	fileStream.seekg(0, std::ios::end);
-	//	str.reserve(fileStream.tellg());
-	//	fileStream.seekg(0, std::ios::beg);
-
-	//	str.assign((std::istreambuf_iterator<char>(fileStream)),
-	//				std::istreambuf_iterator<char>());
-
-	//	cachedFiles.insert(std::pair<std::string, std::string>(filePath, str));
-	//	cachedFiles2.insert(std::pair<std::string, std::string>(filePath, str));
-	//}
-
-	//std::cout << "Done. Press any key to run analysis" << std::endl;
-	//std::cin.ignore();
-
-	////std::cout << "Running single threaded" << std::endl;
-	////{
-	////	std::clock_t startSingle = std::clock();
-
-	////	std::unordered_map<std::string, int> outputMap;
-	////	Thilenius::MapReduce::TokenizeFilesJob job(cachedFiles, outputMap);
-	////	Thilenius::MapReduce::JobScheduler scheduler;
-	////	scheduler.RunJob(job);
-
-	////	std::cout << "MapReduced " << outputMap.size() << " unique values." << std::endl;
-	////	std::cout << "Singe-threaded took: "<< (( std::clock() - startSingle ) / (double) CLOCKS_PER_SEC ) << " seconds" << std::endl;
-	////}
-
-	//std::cout << "Running multi threaded" << std::endl;
-	//{
-	//	std::clock_t startMulti = std::clock();
+	//	std::clock_t startSingle = std::clock();
 
 	//	std::unordered_map<std::string, int> outputMap;
-	//	Thilenius::MapReduce::TokenizeFilesJob job(cachedFiles2, outputMap);
-	//	Thilenius::MapReduce::ThreadedJobScheduler scheduler;
+	//	Thilenius::MapReduce::TokenizeFilesJob job(cachedFiles, outputMap);
+	//	Thilenius::MapReduce::JobScheduler scheduler;
 	//	scheduler.RunJob(job);
 
 	//	std::cout << "MapReduced " << outputMap.size() << " unique values." << std::endl;
-	//	std::cout << "Mutli-threaded took: "<< (( std::clock() - startMulti ) / (double) CLOCKS_PER_SEC ) << " seconds" << std::endl;
+	//	std::cout << "Singe-threaded took: "<< (( std::clock() - startSingle ) / (double) CLOCKS_PER_SEC ) << " seconds" << std::endl;
 	//}
+
+	std::cout << "Running multi threaded" << std::endl;
+	{
+		std::clock_t startMulti = std::clock();
+
+		std::unordered_map<std::string, int> outputMap;
+		Thilenius::MapReduce::TokenizeFilesJob job(cachedFiles2, outputMap);
+		Thilenius::MapReduce::ThreadedJobScheduler scheduler;
+		scheduler.RunJob(job);
+
+		std::cout << "MapReduced " << outputMap.size() << " unique values." << std::endl;
+		std::cout << "Mutli-threaded took: "<< (( std::clock() - startMulti ) / (double) CLOCKS_PER_SEC ) << " seconds" << std::endl;
+	}
 
 	std::cin.ignore();
 }

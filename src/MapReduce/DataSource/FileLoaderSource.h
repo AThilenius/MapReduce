@@ -16,8 +16,8 @@ namespace MapReduce {
 namespace DataSource { 
 
 /************************************************************************/
-/* Parses a space delimited string of file paths. Opens each file and    /
-/* hands out a tuple of <path, ifstream>                                 /
+/* Parses a space delimited string of file paths. Opens each file and   */
+/* hands out a tuple of <path, ifstream>                                */
 /************************************************************************/
 template<
 	typename MapPolicy
@@ -52,8 +52,8 @@ public:
 		
 		std::ifstream* stream = new std::ifstream(key.c_str());
 
-		if (!stream)
-			throw std::exception("Failed to load file");
+		//if (!stream)
+			//throw std::exception("Failed to load file");
 
 		value = stream;
 		return true;

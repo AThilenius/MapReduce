@@ -36,7 +36,7 @@ public:
 	}
 
 	// Access from any thread
-	inline void Combine(typename StdMapDrain<typename ReducePolicy>* other)
+	inline void Combine(StdMapDrain<ReducePolicy>* other)
 	{
 		std::lock_guard<std::mutex> guard(m_mutex);
 		m_data->insert (other->m_data->begin(), other->m_data->end()); 

@@ -26,8 +26,8 @@ template<
 class Job
 {
 public:
-	typedef typename MapPolicy MapPolicyType;
-	typedef typename ReducePolicy ReducePolicyType;
+	typedef MapPolicy MapPolicyType;
+	typedef ReducePolicy ReducePolicyType;
 	typedef typename SourcePolicy::InputType SourceInputType;
 	typedef typename DrainPolicy::InputType DrainInputType;
 	typedef typename BufferPolicy::ValueVectorIteratorType ReduceIteratorType;

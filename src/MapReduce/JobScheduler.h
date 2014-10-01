@@ -20,10 +20,11 @@ void _MapTask(Job* job)
 	typename Job::MapPolicyType mapClass;
 	typename Job::MapPolicyType::KeyType sourceKey;
 	typename Job::MapPolicyType::ValueType sourceValue;
-	Job::MapTaskRunner* runner = new Job::MapTaskRunner();
+    
+	typename Job::MapTaskRunner* runner = new typename Job::MapTaskRunner();
 
 	while (job->Source->GetData(sourceKey, sourceValue))
-		mapClass.Map<typename Job::MapTaskRunner>(*runner, sourceKey, sourceValue);
+		mapClass.template Map<typename Job::MapTaskRunner>(*runner, sourceKey, sourceValue);
 
 	// Combine results back into primary buffer
 	job->DataBuffer->Combine(&runner->LocalBuffer);
@@ -39,10 +40,11 @@ void _ReduceTask(Job* job)
 	typename Job::MapPolicyType::IntermediateKeyType intermitKey;
 	typename Job::ReduceIteratorType iterStart;
 	typename Job::ReduceIteratorType iterEnd;
-	Job::ReduceTaskRunner* runner = new Job::ReduceTaskRunner();
+    
+	typename Job::ReduceTaskRunner* runner = new typename Job::ReduceTaskRunner();
 
 	while (job->DataBuffer->GetData(intermitKey, iterStart, iterEnd))
-		reduceClass.Reduce<typename Job::ReduceTaskRunner, typename Job::ReduceIteratorType>(*runner, intermitKey, iterStart, iterEnd);
+		reduceClass.template Reduce<typename Job::ReduceTaskRunner, typename Job::ReduceIteratorType>(*runner, intermitKey, iterStart, iterEnd);
 
 	job->Drain->Combine(&runner->LocalBuffer);
 	delete runner;
@@ -58,13 +60,13 @@ public:
 	inline void RunJob(Job& job)
 	{
 		// Map it
-		_MapTask<typename Job>(&job);
+		_MapTask<Job>(&job);
 
 		// Shuffle it
 		job.Shuffle();
 
 		// Reduce it
-		_ReduceTask<typename Job>(&job);
+		_ReduceTask<Job>(&job);
 	}
 };
 

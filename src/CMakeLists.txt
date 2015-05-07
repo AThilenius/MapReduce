@@ -27,6 +27,8 @@ MESSAGE(" ")
 # Project Spec
 project(${PROJECT_NAME})
 SET(EXE_NAME ${PROJECT_NAME})
+# Find threads for GCC
+find_package( Threads )
 
 # Set Include / Lib folders
 INCLUDE_DIRECTORIES(${SRC_DIRECTORY})
@@ -70,4 +72,4 @@ ADD_DEFINITIONS(-std=c++11)
 SET(LINK_OPTIONS " ")
 ADD_EXECUTABLE(${EXE_NAME} ${SOURCE_FILES} )
 SET_TARGET_PROPERTIES(${EXE_NAME} PROPERTIES LINK_FLAGS ${LINK_OPTIONS})
-TARGET_LINK_LIBRARIES(${EXE_NAME} ${thirdPartyLibraries})
+TARGET_LINK_LIBRARIES(${EXE_NAME} "${thirdPartyLibraries}-pthread")

@@ -35,8 +35,14 @@ public:
 		m_dataSource(SourceMap)
 	{
 	}
+    
+    inline int Size()
+    {
+        return m_dataSource->size();
+    }
 
-	inline bool GetData(typename MapPolicy::KeyType& key, typename MapPolicy::ValueType& value)
+	inline bool GetData(typename MapPolicy::KeyType& key,
+                        typename MapPolicy::ValueType& value)
 	{
 		std::lock_guard<std::mutex> guard(m_sourceMutex);
 		InputTypeIterator begin = m_dataSource->begin();

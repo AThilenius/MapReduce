@@ -1,9 +1,4 @@
 # Whitelist only Generate scrips and src folder
-*
-!.gitignore
-!src/
-!src/*
-
-!*.bat
-!*.sh
-!*.bash
+UnixMakefile/*
+XCode/*
+Visual Studio 2012/*

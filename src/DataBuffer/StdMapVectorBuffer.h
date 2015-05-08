@@ -79,9 +79,7 @@ template<typename MapPolicy> class StdMapVectorBuffer {
         ValueVectorType* vector = new ValueVectorType();
         vector->template insert<ValueVectorIteratorType>(vector->end(),
            Otheriter->second->begin(), Otheriter->second->end());
-        m_data->insert(std::pair<
-           typename MapPolicy::IntermediateKeyType,
-           ValueVectorType*>(Otheriter->first, vector));
+        m_data->insert( { Otheriter->first, vector } );
       }
       else
         kvpLookup->second->template insert<ValueVectorIteratorType>(

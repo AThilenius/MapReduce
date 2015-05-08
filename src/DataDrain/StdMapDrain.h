@@ -4,10 +4,10 @@
 //  Created by Alec Thilenius on 9/15/2014.
 //  Copyright (c) 2013 Thilenius. All rights reserved.
 //
-
 #pragma once
-#include <unordered_map>
+
 #include <mutex>
+#include <unordered_map>
 
 namespace Thilenius {
 namespace MapReduce {
@@ -15,7 +15,7 @@ namespace DataDrain {
 
 template<typename ReducePolicy> class StdMapDrain {
  public:
-  typedef std::unordered_map< typename ReducePolicy::KeyType,
+  typedef std::unordered_map<typename ReducePolicy::KeyType,
           typename ReducePolicy::ValueType > InputType;
 
   StdMapDrain() :
@@ -32,9 +32,7 @@ template<typename ReducePolicy> class StdMapDrain {
   inline void AddData(typename ReducePolicy::KeyType key,
                       typename ReducePolicy::ValueType value) {
     std::lock_guard<std::mutex> guard(m_mutex);
-    m_data->insert(std::pair<
-                   typename ReducePolicy::KeyType,
-                   typename ReducePolicy::ValueType(key, value));
+    m_data->insert( { key, value } );
   }
 
  private:

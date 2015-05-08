@@ -1,4 +1,3 @@
-# Whitelist only Generate scrips and src folder
 UnixMakefile/*
 XCode/*
 Visual Studio 2012/*
